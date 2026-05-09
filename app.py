@@ -19,7 +19,7 @@
 #                  top-to-bottom; persistent values live in `st.session_state`.
 #   - pyomo      — algebraic modeling: sets, params, vars, constraints,
 #                  objective. Continuous variables only.
-#   - ripopt     — the NLP solver, a Rust reimplementation of IPOPT
+#   - rIPOPT    — the NLP solver, a Rust reimplementation of IPOPT
 #                  (primal-dual interior-point). Called as a subprocess via
 #                  Pyomo. Binary ships in the `pyomo-ripopt` wheel.
 #   - matplotlib — circle plotting (Altair makes circle aspect ratios painful).
@@ -142,7 +142,7 @@ def random_initial_positions(radii, seed=None, box_scale=1.0):
     """Generate a random initial layout. Each circle's center is sampled
     uniformly inside a square of side `box_scale * sum(r)` — the side length
     is large enough to plausibly contain the optimum but small enough that
-    IPOPT doesn't wander."""
+    rIPOPT doesn't wander."""
     rng = np.random.default_rng(seed)
     side = box_scale * sum(radii)
     n = len(radii)
@@ -307,7 +307,7 @@ def solve_model(radii, x0, y0):
     # Per-circle radius parameter.
     m.r = pyo.Param(m.I, initialize={i: float(radii[i]) for i in range(n)})
 
-    # An upper bound on W and H keeps IPOPT well-conditioned. 2 * sum(r)
+    # An upper bound on W and H keeps rIPOPT well-conditioned. 2 * sum(r)
     # is generous: any reasonable packing fits inside a square of that size
     # since side >= max(2*r_i) is the trivial lower bound.
     sum_r = float(sum(radii))
@@ -356,7 +356,7 @@ def solve_model(radii, x0, y0):
     # handles it fine.
     m.area = pyo.Objective(expr=m.W * m.H, sense=pyo.minimize)
 
-    # Solve. ripopt's binary is bundled in pyomo-ripopt so SolverFactory
+    # Solve. rIPOPT's binary is bundled in pyomo-ripopt so SolverFactory
     # finds it without any path lookup. `tee=True` streams solver output
     # to stdout, which we redirect into a StringIO so it can land in the
     # Logs tab.
