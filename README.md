@@ -1,6 +1,10 @@
-# Circle Packing
+# Circle Packing NLP Optimizer
 
-Non-convex NLP for the smallest enclosing rectangle
+A Streamlit app for the classic circle-packing problem as a non-convex
+nonlinear program (Pyomo + pounce). Pack $N$ circles with given radii into
+the smallest enclosing rectangle. The in-app **📐 Formulation** tab walks
+through the non-convex math, the interior-point solution method, and the
+references — see [References](#references) below.
 
 **Live demo:** https://circle-packing.griffith-pse.com  
 **Home:** https://griffith-pse.com
@@ -10,10 +14,11 @@ Non-convex NLP for the smallest enclosing rectangle
     pip install -r requirements.txt
     streamlit run app.py
 
-The solver is **ripopt** — a Rust reimplementation of IPOPT, distributed via
-the [`pyomo-ripopt`](https://pypi.org/project/pyomo-ripopt/) wheel, which
-bundles the solver binary. No separate solver install needed; `pip install`
-takes care of everything.
+The solver is **pounce** — a primal-dual interior-point NLP solver from John
+Kitchin, distributed via the
+[`pyomo-pounce`](https://pypi.org/project/pyomo-pounce/) wheel, which bundles
+the solver binary. No separate solver install needed; `pip install` takes
+care of everything.
 
 ## Deployment
 
@@ -27,8 +32,20 @@ auto-stop machines. Custom domain wired through Cloudflare DNS.
 
 ## Files
 
-- `app.py` — Streamlit UI and computation
+- `app.py` — Streamlit UI, Pyomo model, pounce wrapper
+- `Circle packing.ipynb` — formulation in a notebook
 - `requirements.txt` — Python deps
 - `favicon.png` — Griffith PSE blackletter G favicon
 - `Dockerfile`, `fly.toml`, `.dockerignore` — Fly.io production image config
 - `.github/workflows/deploy.yml` — auto-deploy pipeline
+
+## References
+
+[1] L. T. Biegler, *Nonlinear Programming: Concepts, Algorithms, and
+Applications to Chemical Processes*. Philadelphia, PA: SIAM, 2010.
+[SIAM](https://epubs.siam.org/doi/book/10.1137/1.9780898719383)
+
+[2] M. L. Bynum, G. A. Hackebeil, W. E. Hart, C. D. Laird, B. L. Nicholson,
+J. D. Siirola, J.-P. Watson, and D. L. Woodruff, *Pyomo — Optimization
+Modeling in Python*, 3rd ed. Cham: Springer, 2021.
+[Springer](https://link.springer.com/book/10.1007/978-3-030-68928-5)

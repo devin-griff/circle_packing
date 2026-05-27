@@ -1,6 +1,6 @@
 # Streamlit app on Python 3.12 slim, deployed to Fly.io.
 # This Dockerfile is the template default. Pure-pip apps (scikit-learn,
-# scipy, plotly, pyomo, pyomo-ripopt, etc.) need NO changes here — pip
+# scipy, plotly, pyomo, pyomo-pounce, etc.) need NO changes here — pip
 # installs everything from requirements.txt.
 #
 # If your app needs a system-level library (a solver binary, GraphViz,

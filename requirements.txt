@@ -1,6 +1,6 @@
 streamlit~=1.30
 pyomo~=6.7
-pyomo-ripopt~=0.8
+pyomo-pounce~=0.2
 matplotlib~=3.8
 pandas~=2.0
 numpy~=1.26
