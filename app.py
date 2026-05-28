@@ -628,11 +628,14 @@ def render_optimizer_tab():
             padding-top: 0.25rem; padding-bottom: 0.25rem;
             text-align: right; padding-right: 0.4rem;
         }
-        /* Hide the fullscreen-toggle button that Streamlit overlays on
-           charts on hover. Match by title only — broader data-testid
-           selectors like stElementToolbar / stElementToolbarButton
-           accidentally hid Streamlit's runtime spinner ("Running pounce
-           optimization...") since the spinner shares those testids. */
+        /* Hide the fullscreen-toggle button on the matplotlib chart.
+           StyledFullScreenButton is the specific testid for THIS button
+           in Streamlit 1.52; the broader stElementToolbar selector
+           (which I tried before) also nuked the runtime spinner, so
+           keep this tight to the fullscreen button itself. The
+           title-based fallbacks cover Streamlit versions where the
+           testid name has drifted. */
+        [data-testid="StyledFullScreenButton"],
         button[title="View fullscreen"],
         button[title*="ullscreen" i] {
             display: none !important;
@@ -738,6 +741,13 @@ def render_optimizer_tab():
         with spinner_slot.container():
             with st.spinner("Running pounce optimization..."):
                 result = solve(data)
+                # Pounce returns in ~100 ms on the default 10-circle
+                # instance, fast enough that the spinner flickers in and
+                # out before the eye registers it. A short hold makes
+                # the "something is running" feedback perceivable on
+                # easy instances without noticeably delaying larger
+                # ones (where solve already dominates).
+                time.sleep(0.3)
         spinner_slot.empty()
         # Sync the editor's x0/y0 to the optimal positions (rounded to 1
         # decimal) so the user can perturb from there with the integer
