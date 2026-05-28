@@ -629,6 +629,18 @@ def render_optimizer_tab():
         button[title*="ullscreen" i] {
             display: none !important;
         }
+        /* Cap the matplotlib plot's height so it doesn't extend below
+           the editor column. Constrains the image element directly
+           (Streamlit's use_container_width=True forces width:100% on
+           the img); the height max-with-auto preserves aspect ratio. */
+        [data-testid="stImage"] img {
+            max-height: 55vh !important;
+            height: auto !important;
+            width: auto !important;
+            max-width: 100% !important;
+            margin: 0 auto;
+            display: block;
+        }
         .circle-violation-icon {
             position: relative;
             display: inline-block;
