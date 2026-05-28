@@ -1,4 +1,4 @@
-streamlit~=1.30
+streamlit==1.52.2
 pyomo~=6.7
 pyomo-pounce~=0.2
 matplotlib~=3.8
