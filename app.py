@@ -464,9 +464,18 @@ def _render_circle_editor(data):
     header[3].markdown("**y₀**")
     header[4].markdown("")
 
+    # Fixed-height scrollable container around the per-circle rows so
+    # adding many circles doesn't push the Add button down the page —
+    # the inner container scrolls instead. Header (above) and Add/Reset
+    # buttons (below) stay at fixed positions, so a batch of Add clicks
+    # doesn't require re-scrolling each time. Using `scroll_container.
+    # columns(...)` (rather than a `with st.container(): for...`) keeps
+    # the loop body at the same indent level.
+    scroll_container = st.container(height=400)
+
     new_data = None
     for display_idx, cid in enumerate(data["circles"], start=1):
-        cols = st.columns(editor_cols, vertical_alignment="center")
+        cols = scroll_container.columns(editor_cols, vertical_alignment="center")
         color = _PALETTE[(display_idx - 1) % len(_PALETTE)]
         cols[0].markdown(
             f'<div style="display:inline-flex;align-items:center;'
