@@ -621,28 +621,13 @@ def render_optimizer_tab():
             text-align: right; padding-right: 0.4rem;
         }
         /* Hide the fullscreen-toggle button that Streamlit overlays on
-           charts on hover. Multiple selectors because the testid /
-           button kind has shifted across recent Streamlit versions. */
-        [data-testid="StyledFullScreenButton"],
-        [data-testid="stElementToolbar"],
-        [data-testid="stElementToolbarButton"],
-        [data-testid="stBaseButton-elementToolbar"],
+           charts on hover. Match by title only — using broader
+           data-testid selectors like stElementToolbar accidentally hid
+           the wrapper the matplotlib chart renders inside, which left
+           the chart as a broken <img> placeholder on production. */
         button[title="View fullscreen"],
         button[title*="ullscreen" i] {
             display: none !important;
-        }
-        /* Cap the plot height so the figure doesn't extend below the
-           editor column on a wide monitor. Width:auto preserves the
-           image's natural aspect ratio while the max-height takes over
-           — without overriding width, use_container_width's forced
-           width: 100% would squish the image. */
-        [data-testid="stPyplot"] img,
-        [data-testid="stImage"] img {
-            max-height: 55vh !important;
-            width: auto !important;
-            max-width: 100% !important;
-            margin: 0 auto;
-            display: block;
         }
         .circle-violation-icon {
             position: relative;
