@@ -1018,7 +1018,12 @@ st.markdown(
     .block-container,
     [data-testid="stMainBlockContainer"] {
         padding-top: 2.5rem !important;
-        padding-bottom: 0rem !important;
+        /* Extra bottom padding so the user can pre-scroll the Add
+           button up to the top of the viewport, then click Add several
+           times in a row without having to re-scroll between every
+           click — the empty space below the editor gives the page room
+           to scroll past its natural end. */
+        padding-bottom: 60vh !important;
     }
     /* Streamlit pins a tiny « collapse-sidebar arrow at the top of the
        (now-absent) sidebar area; hide it since we don't have a sidebar. */
