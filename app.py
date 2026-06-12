@@ -446,7 +446,22 @@ def _render_circle_editor(data):
     header[4].markdown("")
 
     new_data = None
-    for display_idx, cid in enumerate(data["circles"], start=1):
+    # Fixed slot count: every rerun renders exactly MAX_N row slots,
+    # with slots beyond the current circle count as invisible
+    # placeholders. Streamlit replaces elements positionally as deltas
+    # stream in but only sweeps TRAILING leftovers when the run ends —
+    # so when a delete shrank the element count, the old last row
+    # lingered on screen for the whole rerun round-trip (the ghost-row
+    # flash). With constant element count there is no trailing
+    # leftover: the vacated slot is overwritten by its placeholder the
+    # moment that delta arrives.
+    n_circles = len(data["circles"])
+    for slot_idx in range(MAX_N):
+        if slot_idx >= n_circles:
+            st.empty()
+            continue
+        cid = data["circles"][slot_idx]
+        display_idx = slot_idx + 1
         cols = st.columns(editor_cols, vertical_alignment="center")
         color = _PALETTE[(display_idx - 1) % len(_PALETTE)]
         cols[0].markdown(
