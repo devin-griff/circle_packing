@@ -456,6 +456,15 @@ def _packing_html(data, layout, *, mode):
     # Width: fill the column, but never let the box outgrow ~56vh of
     # height (the calc ties width to the height cap through the aspect
     # ratio). Centered when narrower than the column.
+    # "Not Solved" badge (top-centre) on the initial-condition view, so the
+    # unsolved / stale state reads at a glance — mirrors the other apps.
+    badge = "" if mode == "optimal" else (
+        '<div style="position:absolute;left:50%;top:8px;'
+        'transform:translateX(-50%);background:rgba(255,255,255,0.85);'
+        'border:1px solid #9ca3af;border-radius:6px;padding:3px 10px;'
+        'color:#b91c1c;font-weight:700;font-size:14px;'
+        'pointer-events:none;white-space:nowrap;">Not Solved</div>'
+    )
     return (
         f'<div style="position:relative;'
         f'width:min(100%, calc(56vh * {vw / vh:.5f}));'
@@ -463,7 +472,7 @@ def _packing_html(data, layout, *, mode):
         f'margin:0 auto;'
         f'border:2px dashed {border};box-sizing:border-box;'
         f'background:#fafafa;">'
-        + "".join(divs) + "</div>"
+        + "".join(divs) + badge + "</div>"
     )
 
 
@@ -589,8 +598,9 @@ def _render_circle_editor(data):
             st.rerun()
 
 
-def _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, data, optimal):
-    """Render the four top-row metrics from the current (data, optimal)
+def _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, time_slot,
+                       data, optimal):
+    """Render the five top-row metrics from the current (data, optimal)
     state. Called BOTH before and after the solve handler so the row height
     stays locked in during the spin — otherwise empty metric placeholders
     collapse to 0 height, the row shrinks, and the bottom-aligned
@@ -603,6 +613,7 @@ def _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, data, optimal):
         _render_top_metric(h_slot, "Height", "—")
         _render_top_metric(area_slot, "Area", "—")
         _render_top_metric(status_slot, "Status", "—")
+        _render_top_metric(time_slot, "Total time", "—")
         return
 
     has_optimal = bool(
@@ -642,6 +653,9 @@ def _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, data, optimal):
                 status_slot, "Status", sev_label,
                 suffix_html=violation_icon,
             )
+        _el = optimal.get("elapsed")
+        _render_top_metric(time_slot, "Total time",
+                           f"{_el:.1f}s" if _el is not None else "—")
     else:
         xmin, ymin, xmax, ymax = _bounding_box(
             data["circles"], data["r"], data["x0"], data["y0"]
@@ -652,6 +666,7 @@ def _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, data, optimal):
         _render_top_metric(h_slot, "Height", f"{h:.1f}")
         _render_top_metric(area_slot, "Area", f"{w * h:.1f}")
         _render_top_metric(status_slot, "Status", "Initialized")
+        _render_top_metric(time_slot, "Total time", "—")
 
 
 def render_optimizer_tab():
@@ -715,7 +730,7 @@ def render_optimizer_tab():
         # a placeholder so the controls in the top row can update
         # session_state before we paint.
         top_row = st.columns(
-            [1, 1.4, 1, 1, 1, 1.4],
+            [1, 1.4, 1, 1, 1, 1.4, 1.1],
             vertical_alignment="bottom",
         )
         with top_row[0]:
@@ -732,11 +747,16 @@ def render_optimizer_tab():
         h_slot = top_row[3].empty()
         area_slot = top_row[4].empty()
         status_slot = top_row[5].empty()
+        time_slot = top_row[6].empty()
 
         # Fill metric slots BEFORE the solve handler so the row keeps its
         # full height during the spin. See _fill_metric_slots docstring.
-        _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, data, optimal)
+        _fill_metric_slots(w_slot, h_slot, area_slot, status_slot, time_slot,
+                           data, optimal)
 
+        # Spacer so the plot sits a little below the controls/metrics row
+        # (matches the facility-layout spacing).
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
         plot_slot = st.empty()
         # Dedicated spinner slot so the spinner appears just below the plot
         # without replacing it. st.empty() collapses to zero height when
