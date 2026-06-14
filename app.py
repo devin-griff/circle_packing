@@ -53,10 +53,10 @@ from pyomo.common.errors import ApplicationError
 
 # ---------- Constants ----------
 
-# Circle count limits. Pounce / IPOPT-family NLPs scale well, but the editor
-# itself gets cramped beyond ~20 rows on a single column.
+# Circle count limits. Pounce / IPOPT-family NLPs scale fine; the cap is really
+# about editor readability — a single column gets cramped past ~25 rows.
 MIN_N = 1
-MAX_N = 20
+MAX_N = 25
 
 # Editor coordinate bounds. Randomize ICs samples centers in a box of side
 # max(2·Σr, 4·max r); with up to MAX_N circles of radius up to R_EDIT_MAX that
@@ -89,10 +89,10 @@ def _default_grid_positions(radii, gap=2):
         for i in range(n)
     ]
 
-# Twenty circles (the editor cap MAX_N), so the instance starts "full" like the
-# other apps. Radii are drawn once from [1, 5] with a fixed seed, so the default
-# — and therefore Reset — is stable and reproducible across runs.
-_DEFAULT_N = 20
+# Fifteen circles by default — a readable starting instance below the editor cap
+# (MAX_N = 25). Radii are drawn once from [1, 5] with a fixed seed, so the
+# default — and therefore Reset — is stable and reproducible across runs.
+_DEFAULT_N = 15
 _DEFAULT_RADII_SEED = 8
 _DEFAULT_RADII = [
     float(r)
