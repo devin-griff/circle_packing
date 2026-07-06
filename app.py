@@ -755,7 +755,7 @@ def render_optimizer_tab():
                            data, optimal)
 
         # Spacer so the plot sits a little below the controls/metrics row
-        # (matches the facility-layout spacing).
+        #.
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
         plot_slot = st.empty()
         # Dedicated spinner slot so the spinner appears just below the plot
